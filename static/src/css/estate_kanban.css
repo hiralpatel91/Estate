@@ -1,0 +1,28 @@
+.custom_kanban_view > .o_kanban_group {
+    width: 30%; /* Limit each column to approximately 3 columns per row */
+    max-width: 30%;
+    margin: 1%;
+    box-sizing: border-box;
+}
+
+.custom_kanban_view > .o_kanban_record {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.custom_kanban_view > .oe_kanban_content {
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.custom_kanban_view > .o_tag {
+    display: inline-block;
+    background-color: #ececec;
+    padding: 3px 6px;
+    border-radius: 3px;
+    margin-right: 5px;
+    font-size: 12px;
+}

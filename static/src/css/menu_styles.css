@@ -1,0 +1,8 @@
+/* This CSS will apply a custom icon to the Real Estate menu */
+li#menu_estate_menu a {
+    background-image: url('/real_estate/static/description/logo.png');
+    background-size: 20px 20px;  /* Adjust size as needed */
+    background-repeat: no-repeat;
+    padding-left: 25px;  /* Adjust for spacing */
+    background-position: left center;
+}

@@ -1,0 +1,57 @@
+<odoo>
+    <!-- Form and Tree Views for Property Type -->
+    <record id="view_estate_property_type_form" model="ir.ui.view">
+        <field name="name">estate.property.type.form</field>
+        <field name="model">estate.property.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open_offers" 
+                            type="object" 
+                            string="Offers"
+                            icon="fa-money"
+                            class="oe_stat_button"
+                            attrs="{'invisible': [('offer_count', '=', 0)]}">
+                        <field name="offer_count" widget="statinfo"/>
+                    </button>
+                    <!-- Add stat button here -->
+                        <!-- <button name="action_open_offers" type="object" string="Offers"
+                            icon="fa-money"
+                            attrs="{'invisible': [('offer_count', '=', 0)]}"
+                            context="{'search_default_property_type_id': active_id}"/>
+                        <field name="offer_count" widget="statinfo" class="o_offer_count_stat"/> -->
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="property_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+<!-- csv data -->
+    <record id="view_estate_property_type_tree" model="ir.ui.view">
+        <field name="name">estate.property.type.tree</field>
+        <field name="model">estate.property.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action for Property Type -->
+    <record id="estate_property_type_action" model="ir.actions.act_window">
+        <field name="name">Property Types</field>
+        <field name="res_model">estate.property.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Structure -->
+    <menuitem id="estate_menu" name="Real Estate" sequence="1"/> <!-- Main menu -->
+
+    <menuitem id="estate_settings_menu" name="Settings" parent="estate_menu" sequence="10" groups="base.group_system"/>
+    <menuitem id="menu_property_types" name="Property Types" parent="estate_settings_menu" action="estate_property_type_action"/>
+</odoo>

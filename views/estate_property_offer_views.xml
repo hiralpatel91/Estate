@@ -1,0 +1,89 @@
+<odoo>
+    <!-- Action to Open Offer Form -->
+    <record id="action_estate_property_offer_form" model="ir.actions.act_window">
+        <field name="name">Create Offer</field>
+        <field name="res_model">estate.property.offer</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('property_type_id', '=', active_id)]</field>
+        <field name="target">new</field>
+        <field name="context">{'default_property_id': active_id}</field>
+    </record>
+
+    <!-- Add Offer List to Property Form as a Tab -->
+    <record id="view_estate_property_form_inherit_offer" model="ir.ui.view">
+        <field name="name">estate.property.form.inherit.offer</field>
+        <field name="model">estate.property</field>
+        <field name="inherit_id" ref="estate.view_estate_property_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Offers">
+                    <!-- Make offers readonly when property status is 'sold' -->
+                    <field name="offers" mode="tree,form" attrs="{'readonly': [('status', '=', 'sold')]}">
+                        <tree editable="bottom">
+                            <field name="amount"/>
+                            <field name="partner_id"/>
+                            <field name="status" decoration-success="status=='accepted'" decoration-danger="status=='refused'"/>
+                            <field name="validity_date"/>
+                            <field name="validity_duration" readonly="1"/>
+                        </tree>
+                        <form>
+                            <group>
+                                <field name="amount"/>
+                                <field name="partner_id"/>
+                                <field name="status"/>
+                                <field name="validity_date"/>
+                                <field name="validity_duration" readonly="1"/>
+                            </group>
+                        </form>
+                    </field>
+                    <!-- Hide 'Create Offer' button when property status is 'sold' -->
+                    <button name="%(action_estate_property_offer_form)d" type="action" string="Create Offer"
+                            class="oe_highlight" attrs="{'invisible': [('status', '=', 'sold')]}"/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Property Offer Tree View -->
+    <record id="view_estate_property_offer_tree" model="ir.ui.view">
+        <field name="name">estate.property.offer.tree</field>
+        <field name="model">estate.property.offer</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="amount"/>
+                <field name="partner_id"/>
+                <field name="property_type_id"/>
+                <field name="status" decoration-success="status=='accepted'" decoration-danger="status=='refused'"/>
+                <field name="validity_date"/>
+                <field name="validity_duration" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Property Offer Form View -->
+    <record id="view_estate_property_offer_form" model="ir.ui.view">
+        <field name="name">estate.property.offer.form</field>
+        <field name="model">estate.property.offer</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_accept" type="object" string="Accept"
+                            attrs="{'invisible': [('status', 'in', ['accepted', 'refused'])]}" class="oe_highlight"/>
+                    <button name="action_refuse" type="object" string="Refuse"
+                            attrs="{'invisible': [('status', 'in', ['accepted', 'refused'])]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="amount"/>
+                        <field name="property_id"/>
+                        <field name="partner_id"/>
+                        <field name="status"/>
+                        <field name="create_date" readonly="1"/>
+                        <field name="validity_date"/>
+                        <field name="validity_duration" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

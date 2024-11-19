@@ -1,0 +1,161 @@
+<odoo>
+    <!-- Define the action for Properties -->
+    <record id="estate_property_action" model="ir.actions.act_window">
+        <field name="name">Properties</field>
+        <field name="res_model">estate.property</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_create">
+                Click to create a new property listing.
+            </p>
+        </field>
+    </record>
+
+    <!-- Form View for Properties -->
+    <record id="view_estate_property_form" model="ir.ui.view">
+        <field name="name">estate.property.form</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_sold" 
+                            type="object" 
+                            string="Sold" 
+                            attrs="{'invisible': [('status', 'not in', ['available', 'offer_received'])]}"
+                            class="oe_highlight"/>
+                    <button name="action_cancel" 
+                            type="object" 
+                            string="Cancel" 
+                            attrs="{'invisible': [('status', 'not in', ['available', 'offer_received'])]}"
+                            class="oe_highlight"/>
+                    <field name="status" widget="statusbar" statusbar_visible="available,offer_received,sold,canceled"/>
+                </header>
+                <sheet>
+                    <field name="image12" widget="image" class="oe_avatar"/>
+                    <group col="4">
+                        <field name="status" readonly="1"/>
+                        <field name="name"/>
+                        <field name="property_type_id" string="Property Type"/>
+                        <field name="postcode"/>
+                        <field name="date_availability" string="Available From"/>
+                        <field name="expected_price"/>
+                        <field name="best_offer" readonly="1"/>
+                        <field name="selling_price"/>
+                        <field name="tags_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <group>
+                                <field name="description"/>
+                                <field name="bedrooms"/>
+                                <field name="living_area" string="Living Area (sqm)"/>
+                                <field name="facades"/>
+                                <field name="garage"/>
+                                <field name="garden"/>
+                                <field name="garden_area" attrs="{'invisible': [('garden', '=', False)]}" string="Garden Area (sqm)"/>
+                                <field name="garden_orientation" attrs="{'invisible': [('garden', '=', False)]}" string="Garden Orientation"/>
+                            </group>
+                        </page>
+                        <page string="Other Info">
+                            <group>
+                                <field name="seller_id" string="Salesperson" readonly="1"/>
+                                <field name="buyer_id" string="Buyer Name" readonly="1"/>
+                                <field name="invoice_id" string="Invoice" widget="many2one_button" 
+                                       attrs="{'invisible': [('status', '!=', 'sold')]}" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View for Properties -->
+    <record id="view_estate_property_tree" model="ir.ui.view">
+        <field name="name">estate.property.tree</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <tree decoration-bf="status == 'sold'" decoration-success="status == 'sold'" 
+                  decoration-info="status == 'available'" decoration-danger="status == 'canceled'" 
+                  decoration-primary="status == 'offer_received'">
+                <field name="name"/>
+                <field name="postcode"/>
+                <field name="image12" widget="image" />
+                <field name="expected_price"/>
+                <field name="selling_price"/>
+                <field name="bedrooms"/>
+                <field name="living_area"/>
+                <field name="garden"/>
+                <field name="status"/>
+                <field name="create_date"/>
+                <field name="best_offer"/>
+                <field name="invoice_id" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+
+<!-- Kanban View for Properties -->
+    <record id="view_estate_property_kanban" model="ir.ui.view">
+        <field name="name">estate.property.kanban</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column" default_order="name asc">
+                <field name="name"/>
+                    <!-- <field name="image12" /> -->
+                <field name="property_type_id"/>
+                <field name="expected_price"/>
+                <field name="status"/>
+                <field name="best_offer"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <field name="image12" widget="image" class="oe_avatar" />
+                                <!-- <img t-if="record.image12.raw_value"
+                                    t-att-src="kanban_image('estate.property', 'image12', record.id.raw_value)"
+                                    alt="Property Image" style="max-height: 100px;"/> 
+                                <img t-if="!record.image.raw_value" src="/estate/static/description/icon.png"
+                                    alt="Default Icon" style="max-height: 100px;"/> -->
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="o_kanban_record_subtitle">
+                                    <field name="property_type_id"/>
+                                </div>
+                                <ul>
+                                    <li>Status: <field name="status"/></li>
+                                    <li>Expected Price: <field name="expected_price" widget="monetary"/></li>
+                                    <li t-if="record.best_offer.raw_value">
+                                        Best Offer: <field name="best_offer" widget="monetary"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+
+        </field>
+    </record>
+    
+    <!-- Search View for Properties -->
+    <record id="estate_property_view_search" model="ir.ui.view">
+        <field name="name">estate.property.view.search.module.name</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Living Area (≥ 50 sqm)" name="filter_living_area" 
+                        domain="[('living_area', '>=', 50)]" context="{'group_by': 'living_area'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Menu Structure -->
+    <menuitem id="estate_menu" name="Real Estate" sequence="1"/>
+    <menuitem id="advertisement_menu" name="Advertisements" parent="estate_menu" sequence="2"/>
+    <menuitem id="menu_estate_property" name="Properties" parent="advertisement_menu" action="estate_property_action"/>
+</odoo>
